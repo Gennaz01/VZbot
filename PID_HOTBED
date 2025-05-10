@@ -1,0 +1,9 @@
+#=====================================================
+# PID Hotbed
+#=====================================================
+[gcode_macro PID_HOTBED]
+description: Calibrate PID Hotbed
+gcode:
+    {% set VELOCITA = params.VELOCITA|default(255)|int %}  # Imposta la velocità della ventola, default 255 (100%)
+    M106 S{VELOCITA}  # Imposta la velocità della ventola
+    PID_CALIBRATE HEATER=heater_bed TARGET=100
