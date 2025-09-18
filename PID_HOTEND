@@ -1,9 +1,21 @@
 #=====================================================
 # PID Hotend
 #=====================================================
+#[gcode_macro PID_HOTEND]
+#description: Calibrate PID Hotend
+#gcode:
+#    {% set VELOCITA = params.VELOCITA|default(26)|int %}  # Imposta la velocità della ventola, default 255 (100%)
+#    M106 S{VELOCITA}  # Imposta la velocità della ventola
+#    PID_CALIBRATE HEATER=extruder TARGET=280
+
+
 [gcode_macro PID_HOTEND]
 description: Calibrate PID Hotend
 gcode:
-    {% set VELOCITA = params.VELOCITA|default(255)|int %}  # Imposta la velocità della ventola, default 255 (100%)
-    M106 S{VELOCITA}  # Imposta la velocità della ventola
-    PID_CALIBRATE HEATER=extruder TARGET=250
+    {% set TEMP = params.TEMP|default(250)|int %}                  # Temperatura target (°C)
+    {% set VENTOLA = params.VENTOLA|default(10)|int %}             # Velocità ventola in %, default 10%
+    {% set FAN_SPEED = (VENTOLA * 255 / 100)|round(0)|int %}       # Conversione in valore 0–255
+    
+    M106 S{FAN_SPEED}                                              # Imposta la ventola alla % scelta
+    PID_CALIBRATE HEATER=extruder TARGET={TEMP}                    # Avvia calibrazione PID
+    M106 S0                                                        # Spegne la ventola alla fine del PID
